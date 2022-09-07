@@ -1,28 +1,15 @@
+cloneset1
+['R11CodeBlock1', 'R12CodeBlock1', 'R13CodeBlock1', 'R14CodeBlock1']
+
+cloneset2
+['R11CodeBlock8', 'R12CodeBlock8', 'R13CodeBlock8', 'R14CodeBlock8']
+
+cloneset3
+['R11CodeBlock2', 'R11CodeBlock7', 'R12CodeBlock2', 'R12CodeBlock7', 'R13CodeBlock2', 'R13CodeBlock7', 'R14CodeBlock2', 'R14CodeBlock7']
+
 cloning_percentage = 67.05653021442495
 FILE LEVEL INFORMATIONtotal_files = 13
-final_revision =     Revision  codeBlockId         unique  clonesets  codeBlock_start  \
-12         4            1  R14CodeBlock1          1               17   
-13         4            2  R14CodeBlock2          3               14   
-14         4            7  R14CodeBlock7          3               12   
-15         4            8  R14CodeBlock8          2               12   
-
-    codeBlock_end  nloc                                 codeBlock_fileinfo  \
-12             55     4  C:/Users/soujanya basangari/Documents/Theses f...   
-13             47     4  C:/Users/soujanya basangari/Documents/Theses f...   
-14             41     4  C:/Users/soujanya basangari/Documents/Theses f...   
-15             48     4  C:/Users/soujanya basangari/Documents/Theses f...   
-
-   codeCloneBlockId codeBlock_start_diffs codeBlock_end_diff nloc_diff  \
-12       CodeBlock7                   0.0                0.0       0.0   
-13       CodeBlock8                   0.0                0.0       0.0   
-14       CodeBlock8                   0.0                0.0       0.0   
-15       CodeBlock7                   0.0                0.0       0.0   
-
-    status disappearing_clone_diffs  
-12  stable                      0.0  
-13  stable                      0.0  
-14  stable                      0.0  
-15  stable                      0.0  
+final_revision = 4
 files_containing_clones = 4
 added_files = 0
 deleted_files = 0

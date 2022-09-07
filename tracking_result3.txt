@@ -1,8 +1,15 @@
+cloneset1
+['R11CodeBlock1', 'R12CodeBlock1', 'R13CodeBlock1']
+
+cloneset2
+['R11CodeBlock8', 'R12CodeBlock8', 'R13CodeBlock8']
+
+cloneset3
+['R11CodeBlock2', 'R11CodeBlock7', 'R12CodeBlock2', 'R12CodeBlock7', 'R13CodeBlock2', 'R13CodeBlock7']
+
 cloning_percentage = 67.05653021442495
 FILE LEVEL INFORMATIONtotal_files = 13
-final_revision = Empty DataFrame
-Columns: [Revision, codeBlockId, unique, clonesets, codeBlock_start, codeBlock_end, nloc, codeBlock_fileinfo, codeCloneBlockId, codeBlock_start_diffs, codeBlock_end_diff, nloc_diff, status, disappearing_clone_diffs]
-Index: []
+final_revision = 3
 files_containing_clones = 4
 added_files = 0
 deleted_files = 0
