@@ -1,0 +1,18 @@
+cloning_percentage = 67.05653021442495
+FILE LEVEL INFORMATIONtotal_files = 13
+final_revision = Empty DataFrame
+Columns: [Revision, codeBlockId, unique, clonesets, codeBlock_start, codeBlock_end, nloc, codeBlock_fileinfo, codeCloneBlockId, codeBlock_start_diffs, codeBlock_end_diff, nloc_diff, status, disappearing_clone_diffs]
+Index: []
+files_containing_clones = 4
+added_files = 0
+deleted_files = 0
+CLONESETS INFORMATIONtotal_clone_sets = 3
+stable_clonesets = 3
+new_clonesets = 0
+deleted_clonesets = 0
+changed_clonesets = 0
+CODECLONES INFORMATIONtotal_codeclones = 4
+stable_codeclones = 4
+new_codeclones = 0
+deleted_codeclones = 0
+changed_codeclones = 0
