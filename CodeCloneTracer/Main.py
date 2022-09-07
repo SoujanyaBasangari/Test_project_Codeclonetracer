@@ -17,11 +17,11 @@ print("load transformed dataset to ML model")
 
 total_files=len(allFilesData)
 
-ml_dataset = cloneTracking.clonetracingModel(current_dataset)
+ml_dataset,indices= cloneTracking.clonetracingModel(current_dataset)
 
 cloning_percentage = (codeclonelines/linesofcode)*100
 
-tracking_result = cloneTracking.analysis_creating_report(ml_dataset,total_files,cloning_percentage)
+tracking_result = cloneTracking.analysis_creating_report(ml_dataset,total_files,cloning_percentage,indices )
 
 print("check tracking.txt for latest report")
 

@@ -56,24 +56,24 @@ def clonetracingModel(df):
     indices = cluster_indices(clusters)
     for k, ind in enumerate(indices):
         print("cloneset", k + 1, "is", ind)
-    maxvalue=df['Revision'].max()
+   # maxvalue=df['Revision'].max()
    
-    path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
-    with open(path, 'w') as f:
-        for k, ind in enumerate(indices):
-            f.write("cloneset{}\n".format(k + 1))
-            f.write("{}\n".format(data.iloc[ind]['unique'].to_list()))
-            f.write("\n") 
+    #path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
+    # with open(path, 'w') as f:
+     #    for k, ind in enumerate(indices):
+      #       f.write("cloneset{}\n".format(k + 1))
+       #      f.write("{}\n".format(data.iloc[ind]['unique'].to_list()))
+       #      f.write("\n") 
     final_dataframe = pd.merge(data, df, on='unique', how='inner')
 
-    return final_dataframe
+    return final_dataframe,indices
 
     # scale(manhattan_distance_df)
     # plt.figure(figsize=(50, 12))
     # dend=hcluster.dendrogram(hcluster.linkage(manhattan_distance_df,method='ward'))
 
 
-def analysis_creating_report(final_dataframe, total_files, cloning_percentage):
+def analysis_creating_report(final_dataframe, total_files, cloning_percentage,indices):
     output = final_dataframe[
         ['unique', 'Revision', 'clonesets', 'codeBlockId', 'codeBlock_start', 'codeBlock_end', 'nloc',
          'codeBlock_fileinfo', 'codeCloneBlockId']]
@@ -143,6 +143,10 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage):
     path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
     
     with open(path, 'w') as f:
+        for k, ind in enumerate(indices):
+            f.write("cloneset{}\n".format(k + 1))
+            f.write("{}\n".format(output.iloc[ind]['unique'].to_list()))
+            f.write("\n") 
   
         f.write("cloning_percentage = {}\n".format(cloning_percentage))
 
@@ -151,7 +155,7 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage):
         
         maxvalue=output['Revision'].max()
         final_revision = output[output.Revision == 4]
-        f.write("final_revision = {}\n".format(final_revision))
+        f.write("final_revision = {}\n".format(maxvalue))
 
         maxvalue=output['Revision'].max()
         final_revision = output[output.Revision == maxvalue]
