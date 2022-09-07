@@ -56,8 +56,10 @@ def clonetracingModel(df):
     indices = cluster_indices(clusters)
     for k, ind in enumerate(indices):
         print("cloneset", k + 1, "is", ind)
-    
-    with open('tracking_result.txt', 'w') as f:
+    maxvalue=df['Revision'].max()
+   
+    path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
+    with open(path, 'w') as f:
         for k, ind in enumerate(indices):
             f.write("cloneset{}\n".format(k + 1))
             f.write("{}\n".format(data.iloc[ind]['unique'].to_list()))
@@ -137,8 +139,10 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage):
     output.reindex(idx)
     output = output.sort_values('Revision')
     maxvalue=output['Revision'].max()
-  
-    with open("tracking_result"+str(maxvalue)+".txt", 'w') as f:
+    
+    path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
+    
+    with open(path, 'w') as f:
   
         f.write("cloning_percentage = {}\n".format(cloning_percentage))
 
