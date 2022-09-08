@@ -1,5 +1,6 @@
 pydriller
 scikit-learn
+fuzzywuzzy
 python-Levenshtein
 pandas
 keras
