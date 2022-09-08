@@ -1,5 +1,6 @@
 import sys
-sys.path.append('//Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main')
+#sys.path.append('//Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main')
+sys.path.append('/Test_project_Codeclonetracer/Test_project_Codeclonetracer')
 import chars2vecmodel
 import sklearn.decomposition
 import matplotlib.pyplot as plt
@@ -140,7 +141,8 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage,in
     output = output.sort_values('Revision')
     maxvalue=output['Revision'].max()
     
-    path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
+    #path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
+    path = '/Test_project_Codeclonetracer/tracking_result.txt'
     
     with open(path, 'w') as f:
         for k, ind in enumerate(indices):
