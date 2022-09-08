@@ -7,7 +7,8 @@ Code clone tracing model has loaded as library/package for java project
 Approach 1-  ML model is being triggered with help of CI/CD pipeline,which continuously integrating the changes into code clone tracing model. 
 
 Approach 2-  import as package
-model(folderpath)
+
+             model(folderpath)
 
 Tracking_result_revision.txt - tracking result
 
