@@ -1,11 +1,11 @@
 cloneset1
-['R1CodeBlock1']
+['R1CodeBlock1', 'R2CodeBlock1']
 
 cloneset2
-['R1CodeBlock8', 'R1CodeBlock3']
+['R1CodeBlock8', 'R2CodeBlock8']
 
 cloneset3
-['R1CodeBlock2', 'R1CodeBlock7', 'R1CodeBlock2', 'R1CodeBlock7']
+['R1CodeBlock2', 'R1CodeBlock7', 'R2CodeBlock2', 'R2CodeBlock7']
 
 cloning_percentage = 67.05653021442495
 FILE LEVEL INFORMATIONtotal_files = 13
@@ -14,12 +14,12 @@ files_containing_clones = 4
 added_files = 0
 deleted_files = 0
 CLONESETS INFORMATIONtotal_clone_sets = 3
-stable_clonesets = 0
-new_clonesets = 3
+stable_clonesets = 3
+new_clonesets = 0
 deleted_clonesets = 0
 changed_clonesets = 0
 CODECLONES INFORMATIONtotal_codeclones = 4
-stable_codeclones = 0
-new_codeclones = 7
+stable_codeclones = 4
+new_codeclones = 0
 deleted_codeclones = 0
 changed_codeclones = 0
