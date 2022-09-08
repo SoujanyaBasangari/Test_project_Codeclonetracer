@@ -1,0 +1,7 @@
+pydriller
+scikit-learn
+python-Levenshtein
+pandas
+keras
+tensorflow
+
