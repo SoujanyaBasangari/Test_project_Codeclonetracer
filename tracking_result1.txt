@@ -1,11 +1,11 @@
 cloneset1
-['R11CodeBlock2', 'R11CodeBlock7']
+['R1CodeBlock2', 'R1CodeBlock7']
 
 cloneset2
-['R11CodeBlock8']
+['R1CodeBlock8']
 
 cloneset3
-['R11CodeBlock1']
+['R1CodeBlock1']
 
 cloning_percentage = 67.05653021442495
 FILE LEVEL INFORMATIONtotal_files = 13
