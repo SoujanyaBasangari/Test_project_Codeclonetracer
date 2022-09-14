@@ -1,6 +1,5 @@
 import sys
-#sys.path.append('//Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main')
-sys.path.append('/Test_project_Codeclonetracer/Test_project_Codeclonetracer')
+sys.path.append('//Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main')
 import chars2vecmodel
 import sklearn.decomposition
 import matplotlib.pyplot as plt
@@ -12,7 +11,7 @@ from sklearn.preprocessing import scale
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.cluster.hierarchy as hcluster
-
+import Config
 
 def cluster_indices(cluster_assignments):
     n = cluster_assignments.max()
@@ -24,7 +23,7 @@ def cluster_indices(cluster_assignments):
 
 def clonetracingModel(df):
     df = df.drop_duplicates(subset=['codeBlockId', 'Revision', 'codeCloneBlockId'], keep='last')
-    df["unique"] = "R1" + df["Revision"].astype(str) + df["codeBlockId"]
+    df["unique"] = "R" + df["Revision"].astype(str) + df["codeBlockId"]
     df = df.reset_index(drop=True)
     c2v_model = chars2vecmodel.load_model('ccmodel')
 
@@ -41,9 +40,7 @@ def clonetracingModel(df):
     data = preprocessed_dataset[['unique', 'emdedding_codeblock_Code']]
     dist = DistanceMetric.get_metric('manhattan')  # manhattan euclidean
 
-    manhattan_distance_df = pd.DataFrame(
-        dist.pairwise(numpy.asarray([numpy.array(xi) for xi in data['emdedding_codeblock_Code']])),
-        columns=data.unique.unique(), index=data.unique.unique())
+    manhattan_distance_df = pd.DataFrame(dist.pairwise(numpy.asarray([numpy.array(xi) for xi in data['emdedding_codeblock_Code']])),columns=data.unique.unique(), index=data.unique.unique())
 
     # clustering
     thresh = 1.5
@@ -140,9 +137,8 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage,in
     output.reindex(idx)
     output = output.sort_values('Revision')
     maxvalue=output['Revision'].max()
-    
-    #path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
-    path = '/Test_project_Codeclonetracer/tracking_result.txt'
+    granularity = Config.granularity
+    path = 'C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main/tracking_result'+str(granularity)+str(maxvalue)+'.txt'
     
     with open(path, 'w') as f:
         for k, ind in enumerate(indices):

@@ -1,4 +1,6 @@
-dirPath = "/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main"
+#dirPath = "/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main"
+
+dirPath = "C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main"
 
 
 # dirPath = "F:\8th-Sem-Project\src\examples\Single"
@@ -11,7 +13,7 @@ dirPath = "/Users/soujanya basangari/Documents/Theses final code/Test_project_Co
 outputLevel = 2
 
 # Minimum length of block to consider
-minimumLengthBlock = 4
+minimumLengthBlock = 5
 
 # Threshhold for considering as code clones
 # Threshhold = 1 for type 2 clones
@@ -27,4 +29,4 @@ variableAndMethodsThreshold = 0.65
 dataFlowSimilaritythreshold = 0.65
 
 # Block level can be 0 = (file level) or 1 = (method level)
-granularity = 'method_level'
+granularity = 'block_level'
