@@ -65,8 +65,8 @@ def extractMethodsAllFiles(listOfFiles):
         previous_dataset = pd.read_csv(previous_file_name, index_col=0)
         revision = previous_dataset.Revision.unique()
         print("Revision", revision)
-        # previous_clones = previous_dataset[~previous_dataset.codeBlock_fileinfo.isin(current_dataset.codeBlock_fileinfo)]
-        # frames = [current_dataset,previous_clones]
+        previous_clones = previous_dataset[~previous_dataset.codeBlock_fileinfo.isin(current_dataset.codeBlock_fileinfo)]
+        frames = [current_dataset,previous_clones]
         current_dataset['Revision'] = revision[0] + 1
         current_dataset = pd.concat([current_dataset, previous_dataset])
         current_dataset = current_dataset.loc[current_dataset.astype(str).drop_duplicates().index]
