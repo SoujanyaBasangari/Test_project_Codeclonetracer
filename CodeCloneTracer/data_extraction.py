@@ -52,7 +52,7 @@ def extractMethodsAllFiles(listOfFiles):
     print("total code blocks",len(allFilesMethodsBlocks),linesofcode)
     cloneBlocks, codeclonelines = CloneDetector.detectClone(allFilesMethodsBlocks)
     print("detecting code clones",len(cloneBlocks),codeclonelines)
-    previous_file_name = 'C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main/'+ granularity + 'tracking.csv'
+    previous_file_name = str(Config.dirPath)+ granularity + 'tracking.csv'
     current_dataset = dataset_creation(cloneBlocks)
     print("Transforming detected code blocks into dataset",current_dataset.shape)
     previous_dataset = pd.DataFrame()
@@ -84,7 +84,7 @@ def extractMethodsAllFiles(listOfFiles):
     current_dataset = current_dataset.reset_index(drop=True)
     current_dataset = current_dataset.drop_duplicates()
     current_dataset = current_dataset.reset_index(drop=True)
-    current_dataset.to_csv('C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main/'+ granularity + 'tracking.csv')
+    current_dataset.to_csv(Config.dirPath+ granularity + 'tracking.csv')
     # current_dataset.to_sql('rxjava', con= engine, if_exists='append', index=False)
     # pd.read_sql('select count(*) from rxjava', conn=engine)
     # current_dataset.to_sql('training_onlinebookstore', con=engine, if_exists='append', index=False)"""
@@ -130,7 +130,7 @@ def normalized_codeblocks(originalCode):
     """
     allCodeBlocks = []
     commentsRemovedCode = removeCommentsFromCode(originalCode)
-    print(len(commentsRemovedCode))
+    
     blocks = [l.split(',') for l in ','.join(commentsRemovedCode).split('}')]
     
     startLine = 1
@@ -141,7 +141,6 @@ def normalized_codeblocks(originalCode):
       flat_list = list(filter(None, flat_list))
       endLine = endLine +len(flat_list)
       if len(flat_list) > 0:
-          print(startLine,endLine,index,flat_list)
           allCodeBlocks.append({"Start": startLine, "End": endLine, "Code": flat_list})
       startLine = startLine+ len(flat_list)
     
@@ -157,7 +156,6 @@ def fileLevelBlocks(originalCode):
     commentsRemovedCode = removeCommentsFromCode(originalCode)
     startLine = 1
     endLine = len(commentsRemovedCode)
-    print(type(commentsRemovedCode),commentsRemovedCode)
     allCodeBlocks.append(
         {"Start": startLine, "End": endLine, "Code": commentsRemovedCode})
     return allCodeBlocks
@@ -257,39 +255,28 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
             package = 'DefaultPackage'
         else:
             package = package.name
-            # print package,'####'
     except Exception as e:
         # logging.warning('Traceback:' + traceback.print_exc())
         return (None, None, [])
 
     file_string_split = filestring.split('\n')
-    # print(file_string_split)
     nodes = itertools.chain(tree.filter(
         javalang.tree.ConstructorDeclaration), tree.filter(javalang.tree.MethodDeclaration))
 
     for path, node in nodes:
-        # print(type(node))
-        # print '---------------------------------------'
         name = '.' + node.name
         for i, var in enumerate(reversed(path)):
-            # print var, i, len(path)-3
             if isinstance(var, javalang.tree.ClassDeclaration):
-                # print 'One Up:',var,var.name
                 if len(path) - 3 == i:  # Top most
                     name = '.' + var.name + check_repetition(var, var.name) + name
                 else:
                     name = '$' + var.name + check_repetition(var, var.name) + name
             if isinstance(var, javalang.tree.ClassCreator):
-                # print 'One Up:',var,var.type.name
                 name = '$' + var.type.name + \
                        check_repetition(var, var.type.name) + name
             if isinstance(var, javalang.tree.InterfaceDeclaration):
-                # print 'One Up:',var,var.name
                 name = '$' + var.name + check_repetition(var, var.name) + name
-        # print i,var,len(path)
-        # print path
-        # while len(path) != 0:
-        #  print path[:-1][-1]
+       
         args = []
         for t in node.parameters:
             dims = []
@@ -301,30 +288,19 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
         args = ",".join(args)
 
         fqn = ("%s%s(%s)") % (package, name, args)
-        # print "->",fqn
+       
 
         (init_line, b) = node.position
         method_body = []
         closed = 0
         openned = 0
 
-        # print '###################################################################################################'
-        # print (init_line,b)
-        # print 'INIT LINE -> ',file_string_split[init_line-1]
-        # print '---------------------'
 
         for line in file_string_split[init_line - 1:]:
-            # if len(line) == 0:
-            #     continue
-            # print '+++++++++++++++++++++++++++++++++++++++++++++++++++'
-            # print line
-            # print comment_inline_pattern
+        
             line_re = re.sub(comment_inline_pattern, '',
                              line, flags=re.MULTILINE)
             line_re = re.sub(re_string, '', line_re, flags=re.DOTALL)
-
-            # print line
-            # print '+++++++++++++++++++++++++++++++++++++++++++++++++++'
 
             closed += line_re.count('}')
             openned += line_re.count('{')
@@ -334,7 +310,7 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
             else:
                 method_body.append(line)
 
-        # print '\n'.join(method_body)
+     
 
         end_line = init_line + len(method_body) - 1
         method_body = '\n'.join(method_body)
@@ -345,10 +321,8 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
         method_name.append(fqn)
 
     if (len(method_pos) != len(method_string)):
-        # logging.warning("File " + file_path + " cannot be parsed. (3)")
         return (None, None, method_name)
     else:
-        # logging.warning("File " + file_path + " successfully parsed.")
         return (method_pos, method_string, method_name)
 
 
@@ -376,17 +350,9 @@ def method_extractor(file):
     methodsInfo = []
 
     FORMAT = '[%(levelname)s] (%(threadName)s) %(message)s'
-    # logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 
     config = ConfigParser()
 
-    # parse existing file
-    # try:
-    #   config.read(os.path.join(os.path.dirname(
-    #      os.path.abspath(__file__)), 'config.ini'))
-    # except IOError:
-    #   print('ERROR - Config settings not found. Usage: $python this-script.py config-file.ini')
-    #  sys.exit()
 
     separators = "; . [ ] ( ) ~ ! - + & * / % < > ^ | ? { } = # , \" \\ : $ ' ` @"
     comment_inline = "#"
@@ -394,15 +360,11 @@ def method_extractor(file):
 
     return getFunctions(file, comment_inline_pattern)
 
-    # allFilesInFolder = GetFiles.getAllFilesUsingFolderPath(folderPath)
-
-    # print(allFilesInFolder)
-
 
 def getAllFilesUsingFolderPath(folderPath):
     allFilesInFolder = []
     fileCount = 0
-    #maxCount = 100
+
     for subdir, dirs, files in os.walk(folderPath):
         for fileName in files:
             fileCount += 1
@@ -410,6 +372,5 @@ def getAllFilesUsingFolderPath(folderPath):
                 continue
             fileFullPath = os.path.join(subdir, fileName)
             allFilesInFolder.append(fileFullPath)
-           # if fileCount > maxCount:
-            #    break
+          
     return allFilesInFolder

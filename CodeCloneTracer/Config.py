@@ -1,11 +1,8 @@
-#dirPath = "/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main"
 
-dirPath = "C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main"
+dirPath = "D:/projects/Test_project_Codeclonetracer/onlinebookstore-J2EE"
 
 
-# dirPath = "F:\8th-Sem-Project\src\examples\Single"
-# outputPath = "F:\8th-Sem-Project\src\CodeCloneDetection\output.txt"
-# outputCSVPath = "F:\8th-Sem-Project\src\CodeCloneDetection\clonesDetected.csv"
+
 # This will be used as level for output into file
 # 0 means everything
 # 1 means current block's code and only clone blocks info

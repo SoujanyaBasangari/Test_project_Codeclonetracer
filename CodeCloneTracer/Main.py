@@ -1,15 +1,11 @@
-#import GetFiles
+
 import data_extraction
 import CloneDetector
-#import CloneSave
 import cloneTracking
-#import ml
-# save char2vec with diff name and load clustering model pickle file
-# allFilesData is list which have all files with specific extension
-print("Getting all file info from folder")
-#dirPath = "C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/onlinebookstore-J2EE"
 
-dirPath = "C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main"
+print("Getting all file info from folder")
+
+dirPath = "D:/projects/Test_project_Codeclonetracer/onlinebookstore-J2EE"
 allFilesData= data_extraction.getAllFilesUsingFolderPath(dirPath)
 
 print("Extracting methods from files",len(allFilesData),"total_files")
@@ -27,10 +23,6 @@ tracking_result = cloneTracking.analysis_creating_report(ml_dataset,total_files,
 
 print("check tracking.txt for latest report")
 
-#print(linesofcode,"total lines",codeclonelines,"total cloned lines", (codeclonelines/linesofcode)*100 , "cloning_percentage")
-
-# CloneSave.writeToFile(codeBlocks)
-#CloneSave.writeToCSV(codeBlocks)
 
 
 #pip install python-Levenshtein
@@ -39,9 +31,8 @@ print("check tracking.txt for latest report")
 #pip install fuzzywuzzy
 #pip install pandas
 #pip install javalang
-
-#pip install virtualenv
-
+# pip install keras
+# pip install tensorflow
 # virtualenv ENV
 
 # source ENV/bin/activate
