@@ -1,6 +1,5 @@
-import sys
-sys.path.append('//Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main')
-import chars2vecmodel
+
+import embeddingModel
 import sklearn.decomposition
 import matplotlib.pyplot as plt
 import numpy
@@ -25,7 +24,7 @@ def clonetracingModel(df):
     df = df.drop_duplicates(subset=['codeBlockId', 'Revision', 'codeCloneBlockId'], keep='last')
     df["unique"] = "R" + df["Revision"].astype(str) + df["codeBlockId"]
     df = df.reset_index(drop=True)
-    c2v_model = chars2vecmodel.load_model('ccmodel')
+    n2v_model = embeddingModel.load_model('ccmodel')
 
     preprocessed_dataset = df[
         ['codeBlockId', 'codeblock_Code', 'Revision', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo',
@@ -35,7 +34,7 @@ def clonetracingModel(df):
 
     codeblock_Code = preprocessed_dataset['codeblock_Code'].tolist()
     # Create word embeddings
-    codeblock_Code = c2v_model.vectorize_words(codeblock_Code)
+    codeblock_Code = n2v_model.vectorize_words(codeblock_Code)
     preprocessed_dataset['emdedding_codeblock_Code'] = codeblock_Code.tolist()
     data = preprocessed_dataset[['unique', 'emdedding_codeblock_Code']]
     dist = DistanceMetric.get_metric('manhattan')  # manhattan euclidean
@@ -48,27 +47,15 @@ def clonetracingModel(df):
 
     data['clonesets'] = clusters
 
-    # Print the indices of the data points in each cluster.
     num_clusters = clusters.max()
     print("Total %d clonesets" % num_clusters)
     indices = cluster_indices(clusters)
     for k, ind in enumerate(indices):
         print("cloneset", k + 1, "is", ind)
-   # maxvalue=df['Revision'].max()
-   
-    #path = 'C:/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main/tracking_result'+str(maxvalue)+'.txt'
-    # with open(path, 'w') as f:
-     #    for k, ind in enumerate(indices):
-      #       f.write("cloneset{}\n".format(k + 1))
-       #      f.write("{}\n".format(data.iloc[ind]['unique'].to_list()))
-       #      f.write("\n") 
+ 
     final_dataframe = pd.merge(data, df, on='unique', how='inner')
 
     return final_dataframe,indices
-
-    # scale(manhattan_distance_df)
-    # plt.figure(figsize=(50, 12))
-    # dend=hcluster.dendrogram(hcluster.linkage(manhattan_distance_df,method='ward'))
 
 
 def analysis_creating_report(final_dataframe, total_files, cloning_percentage,indices):
@@ -138,7 +125,7 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage,in
     output = output.sort_values('Revision')
     maxvalue=output['Revision'].max()
     granularity = Config.granularity
-    path = 'C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main/tracking_result'+str(granularity)+str(maxvalue)+'.txt'
+    path = str(Config.dirPath)+str(granularity)+str(maxvalue)+'.txt'
     
     with open(path, 'w') as f:
         for k, ind in enumerate(indices):
