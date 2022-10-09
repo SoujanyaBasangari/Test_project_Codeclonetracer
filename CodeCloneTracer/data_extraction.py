@@ -11,9 +11,94 @@ import javalang
 
 import Config
 import pandas as pd
-
+from pydriller import Repository
 global found_parent
 
+def extractMethods(url):
+    allFilesMethodsBlocks = {}
+    
+    blocksSoFar = 0
+    commits = []
+    for commit in Repository(url).traverse_commits():
+      commits.append(commit.hash)
+      latest_commit = commits[-1]
+    for commit in Repository(url,only_commits=[latest_commit]).traverse_commits():
+        filename_list=[]
+        revision = revision + 1
+        codeBlocks={}
+        
+        for i in commit.modified_files:
+            if i.filename.endswith('java'): 
+                
+                if Config.granularity == "method_level":
+                  
+                    filename_list.append(i.filename)
+                    originalcode = str(i.source_code).replace('\r', '').replace('\t', '').split('\n')
+                    linesofcode = linesofcode + len(originalcode)
+                    codeBlocks = methodLevelBlocks(originalcode) 
+                elif Config.granularity == 'file_level':
+                    filename_list.append(i.filename)
+                    originalcode = str(i.source_code).replace('\r', '').replace('\t', '').split('\n')
+                    linesofcode = linesofcode + len(originalcode)
+                    codeBlocks = fileLevelBlocks(originalcode)
+                else:
+                    filename_list.append(i.filename)
+                    originalcode = str(i.source_code).replace('\r', '').replace('\t', '').split('\n')
+                    linesofcode = linesofcode + len(originalcode)
+                    codeBlocks =  normalized_codeblocks(originalcode)
+                if len(codeBlocks) == 0:
+                    continue
+                for codeBlock in codeBlocks:
+                    if len(codeBlock) == 0:
+                        continue
+                    codeBlock.update({"FileInfo": i.filename})
+                    codeBlock.update({"change_type": i.change_type})
+                    codeBlock.update({"old_path": i.old_path})
+                    codeBlock.update({"new_path": i.new_path})
+                    codeBlock.update({"source_code": i.source_code})
+                    codeBlock.update({"committer_date":commit.committer_date})
+                    codeBlock.update({"nloc": i.nloc})
+                    blocksSoFar += 1
+                    allFilesMethodsBlocks["CodeBlock" + str(blocksSoFar)] = codeBlock 
+      
+    granularity = Config.granularity
+    print("total code blocks",len(allFilesMethodsBlocks),linesofcode)
+    cloneBlocks, codeclonelines = CloneDetector.detectClone(allFilesMethodsBlocks)
+    print("detecting code clones",len(cloneBlocks),codeclonelines)
+    previous_file_name = str(Config.dirPath)+ granularity + 'tracking.csv'
+    current_dataset = dataset_creation(cloneBlocks)
+    print("Transforming detected code blocks into dataset",current_dataset.shape)
+    previous_dataset = pd.DataFrame()
+    previous_clones = pd.DataFrame(
+        columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
+                 'codeCloneBlockId',
+                 'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
+                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision'])
+    if os.path.isfile(previous_file_name):  # previous_file_name.exists():
+        previous_dataset = pd.read_csv(previous_file_name, index_col=0)
+        revision = previous_dataset.Revision.unique()
+        print("Revision", revision)
+        previous_clones = previous_dataset[~previous_dataset.codeBlock_fileinfo.isin(current_dataset.codeBlock_fileinfo)]
+        frames = [current_dataset,previous_clones]
+        current_dataset['Revision'] = revision[0] + 1
+        current_dataset = pd.concat([current_dataset, previous_dataset])
+        current_dataset = current_dataset.loc[current_dataset.astype(str).drop_duplicates().index]
+
+    else:
+        print("First version, no cloning result exists")
+        print("Revision", 1)
+        current_dataset['Revision'] = 1
+
+    current_dataset = current_dataset.convert_dtypes()
+    all_columns = list(current_dataset)  # Creates list of all column headers
+    current_dataset[all_columns] = current_dataset[all_columns].astype(str)
+    current_dataset = current_dataset.loc[current_dataset.astype(str).drop_duplicates().index]
+    current_dataset['datetime'] = datetime.now()
+    current_dataset = current_dataset.reset_index(drop=True)
+    current_dataset = current_dataset.drop_duplicates()
+    current_dataset = current_dataset.reset_index(drop=True)
+    current_dataset.to_csv(Config.dirPath+ granularity + 'tracking.csv')
+    return current_dataset, linesofcode, codeclonelines,len(filename_list)
 
 def extractMethodsAllFiles(listOfFiles):
     allFilesMethodsBlocks = {}
@@ -52,12 +137,12 @@ def extractMethodsAllFiles(listOfFiles):
     print("total code blocks",len(allFilesMethodsBlocks),linesofcode)
     cloneBlocks, codeclonelines = CloneDetector.detectClone(allFilesMethodsBlocks)
     print("detecting code clones",len(cloneBlocks),codeclonelines)
-    previous_file_name = 'C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main/'+ granularity + 'tracking.csv'
+    previous_file_name = str(Config.dirPath)+ granularity + 'tracking.csv'
     current_dataset = dataset_creation(cloneBlocks)
     print("Transforming detected code blocks into dataset",current_dataset.shape)
     previous_dataset = pd.DataFrame()
     previous_clones = pd.DataFrame(
-        columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code',
+        columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
                  'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision'])
@@ -84,7 +169,7 @@ def extractMethodsAllFiles(listOfFiles):
     current_dataset = current_dataset.reset_index(drop=True)
     current_dataset = current_dataset.drop_duplicates()
     current_dataset = current_dataset.reset_index(drop=True)
-    current_dataset.to_csv('C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main/'+ granularity + 'tracking.csv')
+    current_dataset.to_csv(Config.dirPath+ granularity + 'tracking.csv')
     # current_dataset.to_sql('rxjava', con= engine, if_exists='append', index=False)
     # pd.read_sql('select count(*) from rxjava', conn=engine)
     # current_dataset.to_sql('training_onlinebookstore', con=engine, if_exists='append', index=False)"""
@@ -94,7 +179,7 @@ def extractMethodsAllFiles(listOfFiles):
 
 def dataset_creation(codeBlocks):
     df = pd.DataFrame(
-        columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code',
+        columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
                  'Similarity_MethodCall_Flow', 'nloc'])
@@ -108,13 +193,14 @@ def dataset_creation(codeBlocks):
             codeCloneSimilarity = codeCloneBlockData["Similarity"]
             output.append(
                 [codeBlockId, str(codeBlock["Start"]), str(codeBlock["End"]), codeBlock["FileInfo"], codeBlock["Code"],
+                 codeBlock["Tokens"],
                  codeCloneBlockData["codeCandidateId"], codeCloneBlock["FileInfo"], str(codeCloneSimilarity[0]),
                  str(codeCloneSimilarity[1]), str(codeCloneSimilarity[2]), str(codeBlock["nloc"])
                  ])
     for index, x in enumerate(output):
-        a_row = pd.Series([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10]],
+        a_row = pd.Series([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10],x[11]],
                           index=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo',
-                                 'codeblock_Code', 'codeCloneBlockId',
+                                 'codeblock_Code', 'tokens','codeCloneBlockId',
                                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
                                  'Similarity_MethodCall_Flow', 'nloc'])
         row_df = pd.DataFrame([a_row])
@@ -130,7 +216,7 @@ def normalized_codeblocks(originalCode):
     """
     allCodeBlocks = []
     commentsRemovedCode = removeCommentsFromCode(originalCode)
-    print(len(commentsRemovedCode))
+    
     blocks = [l.split(',') for l in ','.join(commentsRemovedCode).split('}')]
     
     startLine = 1
@@ -141,7 +227,6 @@ def normalized_codeblocks(originalCode):
       flat_list = list(filter(None, flat_list))
       endLine = endLine +len(flat_list)
       if len(flat_list) > 0:
-          print(startLine,endLine,index,flat_list)
           allCodeBlocks.append({"Start": startLine, "End": endLine, "Code": flat_list})
       startLine = startLine+ len(flat_list)
     
@@ -157,7 +242,6 @@ def fileLevelBlocks(originalCode):
     commentsRemovedCode = removeCommentsFromCode(originalCode)
     startLine = 1
     endLine = len(commentsRemovedCode)
-    print(type(commentsRemovedCode),commentsRemovedCode)
     allCodeBlocks.append(
         {"Start": startLine, "End": endLine, "Code": commentsRemovedCode})
     return allCodeBlocks
@@ -257,39 +341,28 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
             package = 'DefaultPackage'
         else:
             package = package.name
-            # print package,'####'
     except Exception as e:
         # logging.warning('Traceback:' + traceback.print_exc())
         return (None, None, [])
 
     file_string_split = filestring.split('\n')
-    # print(file_string_split)
     nodes = itertools.chain(tree.filter(
         javalang.tree.ConstructorDeclaration), tree.filter(javalang.tree.MethodDeclaration))
 
     for path, node in nodes:
-        # print(type(node))
-        # print '---------------------------------------'
         name = '.' + node.name
         for i, var in enumerate(reversed(path)):
-            # print var, i, len(path)-3
             if isinstance(var, javalang.tree.ClassDeclaration):
-                # print 'One Up:',var,var.name
                 if len(path) - 3 == i:  # Top most
                     name = '.' + var.name + check_repetition(var, var.name) + name
                 else:
                     name = '$' + var.name + check_repetition(var, var.name) + name
             if isinstance(var, javalang.tree.ClassCreator):
-                # print 'One Up:',var,var.type.name
                 name = '$' + var.type.name + \
                        check_repetition(var, var.type.name) + name
             if isinstance(var, javalang.tree.InterfaceDeclaration):
-                # print 'One Up:',var,var.name
                 name = '$' + var.name + check_repetition(var, var.name) + name
-        # print i,var,len(path)
-        # print path
-        # while len(path) != 0:
-        #  print path[:-1][-1]
+       
         args = []
         for t in node.parameters:
             dims = []
@@ -301,30 +374,19 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
         args = ",".join(args)
 
         fqn = ("%s%s(%s)") % (package, name, args)
-        # print "->",fqn
+       
 
         (init_line, b) = node.position
         method_body = []
         closed = 0
         openned = 0
 
-        # print '###################################################################################################'
-        # print (init_line,b)
-        # print 'INIT LINE -> ',file_string_split[init_line-1]
-        # print '---------------------'
 
         for line in file_string_split[init_line - 1:]:
-            # if len(line) == 0:
-            #     continue
-            # print '+++++++++++++++++++++++++++++++++++++++++++++++++++'
-            # print line
-            # print comment_inline_pattern
+        
             line_re = re.sub(comment_inline_pattern, '',
                              line, flags=re.MULTILINE)
             line_re = re.sub(re_string, '', line_re, flags=re.DOTALL)
-
-            # print line
-            # print '+++++++++++++++++++++++++++++++++++++++++++++++++++'
 
             closed += line_re.count('}')
             openned += line_re.count('{')
@@ -334,7 +396,7 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
             else:
                 method_body.append(line)
 
-        # print '\n'.join(method_body)
+     
 
         end_line = init_line + len(method_body) - 1
         method_body = '\n'.join(method_body)
@@ -345,10 +407,8 @@ def getFunctions(filestring, comment_inline_pattern=".*?$"):
         method_name.append(fqn)
 
     if (len(method_pos) != len(method_string)):
-        # logging.warning("File " + file_path + " cannot be parsed. (3)")
         return (None, None, method_name)
     else:
-        # logging.warning("File " + file_path + " successfully parsed.")
         return (method_pos, method_string, method_name)
 
 
@@ -376,17 +436,9 @@ def method_extractor(file):
     methodsInfo = []
 
     FORMAT = '[%(levelname)s] (%(threadName)s) %(message)s'
-    # logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 
     config = ConfigParser()
 
-    # parse existing file
-    # try:
-    #   config.read(os.path.join(os.path.dirname(
-    #      os.path.abspath(__file__)), 'config.ini'))
-    # except IOError:
-    #   print('ERROR - Config settings not found. Usage: $python this-script.py config-file.ini')
-    #  sys.exit()
 
     separators = "; . [ ] ( ) ~ ! - + & * / % < > ^ | ? { } = # , \" \\ : $ ' ` @"
     comment_inline = "#"
@@ -394,15 +446,11 @@ def method_extractor(file):
 
     return getFunctions(file, comment_inline_pattern)
 
-    # allFilesInFolder = GetFiles.getAllFilesUsingFolderPath(folderPath)
-
-    # print(allFilesInFolder)
-
 
 def getAllFilesUsingFolderPath(folderPath):
     allFilesInFolder = []
     fileCount = 0
-    #maxCount = 100
+
     for subdir, dirs, files in os.walk(folderPath):
         for fileName in files:
             fileCount += 1
@@ -410,6 +458,5 @@ def getAllFilesUsingFolderPath(folderPath):
                 continue
             fileFullPath = os.path.join(subdir, fileName)
             allFilesInFolder.append(fileFullPath)
-           # if fileCount > maxCount:
-            #    break
+          
     return allFilesInFolder

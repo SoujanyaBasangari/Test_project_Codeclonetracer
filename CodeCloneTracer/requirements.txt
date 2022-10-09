@@ -1,8 +1,9 @@
 pydriller
 scikit-learn
+javalang
 fuzzywuzzy
 python-Levenshtein
 pandas
 keras
 tensorflow
-
+matplotlib

@@ -1,19 +1,12 @@
-#dirPath = "/Users/soujanya basangari/Documents/Theses final code/Test_project_Codeclonetracer-main/Test_project_Codeclonetracer-main"
 
-dirPath = "C:/Users/soujanya basangari/Documents/Theses final code/Java_Repository_Test_Repo-main"
+dirPath = "D:/projects/Test_project_Codeclonetracer/onlinebookstore-J2EE"
 
+url = "https://github.com/shashirajraja/onlinebookstore"
 
-# dirPath = "F:\8th-Sem-Project\src\examples\Single"
-# outputPath = "F:\8th-Sem-Project\src\CodeCloneDetection\output.txt"
-# outputCSVPath = "F:\8th-Sem-Project\src\CodeCloneDetection\clonesDetected.csv"
-# This will be used as level for output into file
-# 0 means everything
-# 1 means current block's code and only clone blocks info
-# 2 means only current block's and clone block's info
-outputLevel = 2
+extract_from_git = False
 
 # Minimum length of block to consider
-minimumLengthBlock = 5
+minimumLengthBlock = 10
 
 # Threshhold for considering as code clones
 # Threshhold = 1 for type 2 clones
@@ -28,5 +21,5 @@ variableAndMethodsThreshold = 0.65
 # Threshold while comparing dataflow of two variables and methods
 dataFlowSimilaritythreshold = 0.65
 
-# Block level can be 0 = (file level) or 1 = (method level)
-granularity = 'block_level'
+# Block level can be 0 = (file level) or 1 = (method level) block_level
+granularity = 'method_level'
