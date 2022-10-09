@@ -125,7 +125,7 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage,in
     output = output.sort_values('Revision')
     maxvalue=output['Revision'].max()
     granularity = Config.granularity
-    path = str(Config.dirPath)+str(granularity)+str(maxvalue)+'.txt'
+    path = str(Config.dirPath)+str(granularity)+'.txt'
     
     with open(path, 'w') as f:
         for k, ind in enumerate(indices):
