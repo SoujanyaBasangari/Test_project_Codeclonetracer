@@ -61,7 +61,7 @@ def clonetracingModel(df):
 def analysis_creating_report(final_dataframe, total_files, cloning_percentage,indices):
     output = final_dataframe[
         ['unique', 'Revision', 'clonesets', 'codeBlockId', 'codeBlock_start', 'codeBlock_end', 'nloc',
-         'codeBlock_fileinfo', 'codeCloneBlockId']]
+         'codeBlock_fileinfo', 'codeCloneBlockId','change_type']]
     output = output.drop_duplicates(subset=['unique'], keep='last')
     output = output.sort_values('Revision')
     output['codeBlockId'] = output['codeBlockId'].str.replace('CodeBlock', '')
@@ -99,8 +99,11 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage,in
     output['status'] = ''
     output['status'] = output['status'].where(output['ix'].isin(ix_first), 'stable')
     output['status'] = output['status'].replace('', 'new')
-    output.loc[output.codeBlock_end_diff > 0, 'status'] = 'Modified/Added'
-    output.loc[output.codeBlock_end_diff < 0, 'status'] = 'Modified/removed'
+
+    output.loc[(output.status == '', 'status') |(output.change_type == 'ModificationType.ADD'), 'status']= 'new' 
+
+    output.loc[(output.codeBlock_end_diff > 0)|(output.change_type == 'ModificationType.MODIFY'), 'status'] = 'Modified/Added'
+    output.loc[(output.codeBlock_end_diff < 0)|(output.change_type == 'ModificationType.MODIFY'), 'status'] = 'Modified/removed'
     output['codeBlock_start_diffs'] = output['codeBlock_start_diffs'].replace(np.NaN, 'new')
     output['codeBlock_end_diff'] = output['codeBlock_end_diff'].replace(np.NaN, 'new')
     output['nloc_diff'] = output['nloc_diff'].replace(np.NaN, 'new')
@@ -197,4 +200,3 @@ def analysis_creating_report(final_dataframe, total_files, cloning_percentage,in
         f.close()
 
     return output
-
