@@ -62,6 +62,7 @@ def extractMethods(url):
                     allFilesMethodsBlocks["CodeBlock" + str(blocksSoFar)] = codeBlock 
       
     # add previous clones to allfilesmethodblocks
+    #iterate previous dataframe allFilesMethodsBlocks["CodeBlock" + old] = codeBlock 
     granularity = Config.granularity
     print("total code blocks",len(allFilesMethodsBlocks),linesofcode)
     cloneBlocks, codeclonelines = CloneDetector.detectClone(allFilesMethodsBlocks)
