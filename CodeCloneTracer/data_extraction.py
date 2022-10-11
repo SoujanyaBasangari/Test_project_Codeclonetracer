@@ -75,7 +75,7 @@ def extractMethods(url):
         columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision'])
+                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision','change_type'])
     
     previous_file_name = Config.granularity + 'tracking.csv'
    
@@ -158,7 +158,7 @@ def extractMethodsAllFiles(listOfFiles):
             codeBlock.update({"FileInfo": filePath})
             codeBlock.update({"nloc": len(codeBlock)})
             codeBlock.update({"source_code": originalCode})
-
+            codeBlock.update({"change_type": 'NA'})
             blocksSoFar += 1
             allFilesMethodsBlocks["CodeBlock" + str(blocksSoFar)] = codeBlock
     
@@ -210,7 +210,7 @@ def dataset_creation(codeBlocks):
         columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                 'Similarity_MethodCall_Flow', 'nloc'])
+                 'Similarity_MethodCall_Flow', 'nloc','change_type'])
 
     output = []
     for codeBlockId in codeBlocks:
@@ -223,14 +223,14 @@ def dataset_creation(codeBlocks):
                 [codeBlockId, str(codeBlock["Start"]), str(codeBlock["End"]), codeBlock["FileInfo"], codeBlock["Code"],
                  codeBlock["Tokens"],
                  codeCloneBlockData["codeCandidateId"], codeCloneBlock["FileInfo"], str(codeCloneSimilarity[0]),
-                 str(codeCloneSimilarity[1]), str(codeCloneSimilarity[2]), str(codeBlock["nloc"])
+                 str(codeCloneSimilarity[1]), str(codeCloneSimilarity[2]), str(codeBlock["nloc"]), str(codeBlock["change_type"])
                  ])
     for index, x in enumerate(output):
-        a_row = pd.Series([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10],x[11]],
+        a_row = pd.Series([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10],x[11],x[12]],
                           index=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo',
                                  'codeblock_Code', 'tokens','codeCloneBlockId',
                                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                                 'Similarity_MethodCall_Flow', 'nloc'])
+                                 'Similarity_MethodCall_Flow', 'nloc','change_type'])
         row_df = pd.DataFrame([a_row])
         df = df.append(row_df)
 
