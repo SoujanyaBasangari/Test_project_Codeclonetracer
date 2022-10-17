@@ -92,7 +92,7 @@ def parenthesisBalancer(method_lines):
 
 
 def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], clonesInfo=[]):
-    print("test1",m1_v_scope, m2_v_scope,m2_mc_scope)
+
     
     if '' in m1_v_scope:
         m1_v_scope=m1_v_scope.remove('')
