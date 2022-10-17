@@ -92,6 +92,15 @@ def parenthesisBalancer(method_lines):
 
 
 def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], clonesInfo=[]):
+    print("test1",m1_v_scope, m2_v_scope,m2_mc_scope)
+    
+    if '' in m1_v_scope:
+        m1_v_scope=m1_v_scope.remove('')
+    if '' in m2_v_scope:
+        m2_v_scope=m2_v_scope.remove('')
+    if'' in m2_mc_scope:
+        m2_mc_scope=m2_mc_scope.remove('')
+
     # m1_v_scope = [["n", "1global 2iteration 1global"], ["temp",]]
     dataFlowSimilaritythreshold = 0.95
     clone_count_variables, total_count_variables = 0, max(
@@ -105,6 +114,7 @@ def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], 
     i = 0
     j = 0
     while i < len(m1_v_scope) and j < len(m2_v_scope):
+        print("test12", len(m1_v_scope),len(m2_v_scope))
         v_len1 = len(m1_v_scope[i][1].split())
         v_len2 = len(m2_v_scope[j][1].split())
 
@@ -125,7 +135,8 @@ def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], 
                 i += 1
             else:
                 j += 1
-
+        else :
+            break
     i = 0
     j = 0
     while i < len(m1_mc_scope) and j < len(m2_mc_scope):
