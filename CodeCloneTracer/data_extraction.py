@@ -67,6 +67,8 @@ def extractMethods(url):
                     codeBlock.update({"source_code": i.source_code})
                     codeBlock.update({"committer_date":commit.committer_date})
                     codeBlock.update({"nloc": i.nloc})
+                    codeBlock.update({"commit.hash":commit.hash})
+                    codeBlock.update({"nloc": i.nloc})
                     blocksSoFar += 1
                     allFilesMethodsBlocks["CodeBlock" + str(blocksSoFar)] = codeBlock 
     
@@ -75,7 +77,7 @@ def extractMethods(url):
         columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision','change_type'])
+                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision','change_type','commit']])
     
     previous_file_name = Config.granularity + 'tracking.csv'
    
@@ -159,6 +161,7 @@ def extractMethodsAllFiles(listOfFiles):
             codeBlock.update({"nloc": len(codeBlock)})
             codeBlock.update({"source_code": originalCode})
             codeBlock.update({"change_type": 'NA'})
+            codeBlock.update({"commit.hash": 'NA'})
             blocksSoFar += 1
             allFilesMethodsBlocks["CodeBlock" + str(blocksSoFar)] = codeBlock
     
@@ -175,7 +178,7 @@ def extractMethodsAllFiles(listOfFiles):
         columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision'])
+                 'Similarity_MethodCall_Flow', 'commitinfo', 'nloc', 'Revision','commit'])
     
     if os.path.isfile(previous_file_name):  # previous_file_name.exists():
         previous_dataset = pd.read_csv(previous_file_name, index_col=0)
@@ -210,7 +213,7 @@ def dataset_creation(codeBlocks):
         columns=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo', 'codeblock_Code','tokens',
                  'codeCloneBlockId',
                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                 'Similarity_MethodCall_Flow', 'nloc','change_type'])
+                 'Similarity_MethodCall_Flow', 'nloc','change_type','commit'])
 
     output = []
     for codeBlockId in codeBlocks:
@@ -223,18 +226,19 @@ def dataset_creation(codeBlocks):
                 [codeBlockId, str(codeBlock["Start"]), str(codeBlock["End"]), codeBlock["FileInfo"], codeBlock["Code"],
                  codeBlock["Tokens"],
                  codeCloneBlockData["codeCandidateId"], codeCloneBlock["FileInfo"], str(codeCloneSimilarity[0]),
-                 str(codeCloneSimilarity[1]), str(codeCloneSimilarity[2]), str(codeBlock["nloc"]), str(codeBlock["change_type"])
-                 ])
+                 str(codeCloneSimilarity[1]), str(codeCloneSimilarity[2]), str(codeBlock["nloc"]), str(codeBlock["change_type"]),                    str(codeBlock["commit.hash"])
+                ])
     for index, x in enumerate(output):
-        a_row = pd.Series([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10],x[11],x[12]],
+        a_row = pd.Series([x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10],x[11],x[12],x[13]],
                           index=['codeBlockId', 'codeBlock_start', 'codeBlock_end', 'codeBlock_fileinfo',
                                  'codeblock_Code', 'tokens','codeCloneBlockId',
                                  'codeCloneBlock_Fileinfo', 'Similarity_Tokens', 'Similarity_Variable_Flow',
-                                 'Similarity_MethodCall_Flow', 'nloc','change_type'])
+                                 'Similarity_MethodCall_Flow', 'nloc','change_type','commit'])
         row_df = pd.DataFrame([a_row])
         df = df.append(row_df)
 
     return df
+
 def normalized_codeblocks(originalCode):
     """
     input : originalCode
