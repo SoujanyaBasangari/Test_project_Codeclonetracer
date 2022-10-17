@@ -87,8 +87,8 @@ def extractMethods(url):
           codeBlock.update({"Start":row['codeBlock_start']})
           codeBlock.update({"End": row['codeBlock_end']})
           codeBlock.update({"FileInfo": row['codeBlock_fileinfo']})
-          codeBlock.update({"committer_date":row['c1']})
-          codeBlock.update({"nloc": row['c1']})
+          codeBlock.update({"committer_date":row['committer_date']})
+          codeBlock.update({"nloc": row['nloc']})
           allFilesMethodsBlocks["CodeBlock" + str("old"+row['codeBlockId'])] = codeBlock 
       
     print("total code blocks",len(allFilesMethodsBlocks),linesofcode)
