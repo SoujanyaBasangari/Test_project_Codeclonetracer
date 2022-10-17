@@ -92,7 +92,7 @@ def parenthesisBalancer(method_lines):
 
 
 def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], clonesInfo=[]):
-
+    
     
     if '' in m1_v_scope:
         m1_v_scope=m1_v_scope.remove('')
@@ -114,7 +114,7 @@ def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], 
     i = 0
     j = 0
     while i < len(m1_v_scope) and j < len(m2_v_scope):
-        print("test12", len(m1_v_scope),len(m2_v_scope))
+        print("test12")
         v_len1 = len(m1_v_scope[i][1].split())
         v_len2 = len(m2_v_scope[j][1].split())
 
@@ -137,26 +137,7 @@ def getSimilarity(m1_v_scope=[], m1_mc_scope=[], m2_v_scope=[], m2_mc_scope=[], 
                 j += 1
         else :
             break
-    i = 0
-    j = 0
-    while i < len(m1_mc_scope) and j < len(m2_mc_scope):
 
-        mc_len1 = len(m1_mc_scope[i][1].split())
-        mc_len2 = len(m2_mc_scope[j][1].split())
-
-        # if min(mc_len1, mc_len2) / max(mc_len1, mc_len2) >= Config.dataFlowSimilaritythreshold:
-        if max(mc_len1, mc_len2) > 0:
-            if min(mc_len1, mc_len2) / max(mc_len1, mc_len2) >= dataFlowSimilaritythreshold:
-                similarity = stringMatching(m1_mc_scope[i][1], m2_mc_scope[j][1])
-                if similarity >= dataFlowSimilaritythreshold:
-                    # if similarity >= Config.dataFlowSimilaritythreshold:
-                    clone_count_method_calls += 1
-                i += 1
-                j += 1
-            elif mc_len1 > mc_len2:
-                i += 1
-            else:
-                j += 1
 
     similarityVariables = clone_count_variables / \
                           total_count_variables if total_count_variables != 0 else 1
